@@ -760,15 +760,13 @@
     </iframe>    
     </div>
   </div>
-
-  <script src="https://unpkg.com/oh-my-live2d@latest"></script>
+  <script src="https://unpkg.com/live2d-widget@3.0.4/lib/L2Dwidget.min.js"></script>
   <script>
     function scrollToSection(id) {
       var el = document.getElementById(id);
       if (!el) return;
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-
     // 顶部引言：随机切换
     (function () {
       var el = document.getElementById("subtitle-text");
@@ -905,24 +903,26 @@
     })();
 
     // OhMyLive2D 看板娘
-    window.addEventListener("load", function () {
-      if (!window.OML2D || !window.OML2D.loadOml2d) return;
-      window.OML2D.loadOml2d({
-        dockedPosition: "left",
-        primaryColor: "#7ec9ff",
-        mobileDisplay: false,
-        models: [
-          {
-            path: "/HK416/model.json",
-            position: [0, 60],
-            scale: 0.08,
-            stageStyle: {
-              height: 450,
-            },
-          },
-        ],
-      });
-    });
+    L2Dwidget.init({
+  model: {
+    jsonPath: "/HK416/model.json"
+  },
+  display: {
+    position: "left",
+    width: 250,
+    height: 400,
+    hOffset: 0,
+    vOffset: -20
+  },
+  mobile: {
+    show: true,
+    scale: 0.5
+  },
+  react: {
+    opacityDefault: 0.9,
+    opacityOnHover: 1
+  }
+});
   </script>
 </body>
 </html>
