@@ -89,10 +89,22 @@
     canvas {
       background: transparent !important;
     }
+
+      #live2dcanvas,
+      #live2dcanvas:focus,
+      .live2d-widget-container canvas,
+      .live2d-widget-container canvas:focus,
+      canvas#live2dcanvas {
+      outline: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
     .page {
       max-width: 960px;
       margin: 0 auto;
     }
+
 
     header {
       display: flex;
