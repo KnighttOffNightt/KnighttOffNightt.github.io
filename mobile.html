@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/jpeg" href="images/01.jpg" />
+  <title>Kon的二次元小屋 - 手机版</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(145deg, #fefce8 0%, #e0f2fe 50%, #fce7f3 100%);
+      color: #334155;
+      padding: 12px;
+    }
+    .page { max-width: 720px; margin: 0 auto; }
+    .hero {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(186, 230, 253, 0.9);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(125, 211, 252, 0.3);
+    }
+    .hero-top { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 12px rgba(125, 211, 252, 0.45);
+      flex-shrink: 0;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    h1 { font-size: 22px; line-height: 1.25; }
+    .subtitle { margin-top: 6px; font-size: 13px; color: #64748b; min-height: 1.4em; }
+    .quick-nav {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .nav-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f172a;
+      background: linear-gradient(135deg, #7dd3fc, #fde68a);
+    }
+    .block {
+      margin-top: 12px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(191, 219, 254, 0.9);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 8px 20px rgba(191, 219, 254, 0.35);
+    }
+    .section-title { font-size: 16px; font-weight: 700; color: #1e293b; }
+    .section-sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .section-body { margin-top: 8px; font-size: 13px; line-height: 1.75; color: #334155; }
+    .pill-list {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      background: rgba(186, 230, 253, 0.35);
+      border: 1px solid rgba(125, 211, 252, 0.7);
+    }
+    .character-list {
+      list-style: none;
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .character-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px dashed rgba(125, 211, 252, 0.8);
+      border-radius: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,0.85);
+    }
+    .character-item img {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .character-info { display: flex; flex-direction: column; }
+    .character-name { font-size: 13px; font-weight: 700; color: #0f172a; }
+    .character-from { font-size: 12px; color: #64748b; }
+    .links { display: grid; gap: 8px; margin-top: 8px; }
+    .anime-btn {
+      text-align: center;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, #f472b6, #60a5fa);
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .mode-row {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .mode-row-label { font-size: 12px; color: #64748b; }
+    .mode-btn {
+      border: 1px solid rgba(125, 211, 252, 0.9);
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0f172a;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .player-wrap { margin-top: 12px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(125, 211, 252, 0.7); }
+    .player-wrap iframe { width: 100%; border: none; display: block; }
+    footer { margin: 14px 2px 4px; font-size: 11px; color: #64748b; }
+
+    body.dark-mode {
+      background: radial-gradient(circle at 0% 0%, #1e293b 0, #0f172a 45%, #020617 100%);
+      color: #e2e8f0;
+    }
+    body.dark-mode .hero,
+    body.dark-mode .block {
+      background: rgba(15, 23, 42, 0.92);
+      border-color: rgba(51, 65, 85, 0.95);
+      box-shadow: 0 12px 24px rgba(2, 6, 23, 0.65);
+    }
+    body.dark-mode .section-title,
+    body.dark-mode .character-name,
+    body.dark-mode h1 { color: #f8fafc; }
+    body.dark-mode .section-sub,
+    body.dark-mode .subtitle,
+    body.dark-mode .section-body,
+    body.dark-mode .character-from,
+    body.dark-mode footer { color: #cbd5e1; }
+    body.dark-mode .nav-btn { color: #f8fafc; background: linear-gradient(135deg, #0ea5e9, #eab308); }
+    body.dark-mode .pill { color: #e2e8f0; border-color: rgba(56,189,248,0.7); background: rgba(14,165,233,0.18); }
+    body.dark-mode .character-item { background: rgba(15,23,42,0.88); border-color: rgba(71,85,105,0.95); }
+    body.dark-mode .mode-btn { background: #0b1220; border-color: rgba(71,85,105,0.95); color: #e2e8f0; }
+    body.dark-mode .mode-row-label { color: #cbd5e1; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="avatar"><img src="images/01.jpg" alt="Knight Of Night 头像" loading="lazy" decoding="async" /></div>
+        <div>
+          <h1>Kon的二次元小屋</h1>
+          <p class="subtitle" id="subtitle-text"></p>
+        </div>
+      </div>
+      <div class="quick-nav">
+        <button class="nav-btn" data-target="about">个人简介</button>
+        <button class="nav-btn" data-target="hobbies">兴趣爱好</button>
+        <button class="nav-btn" data-target="characters">喜欢的角色</button>
+        <button class="nav-btn" data-target="acgn">我推的ACGN</button>
+      </div>
+      <div class="mode-row">
+        <span class="mode-row-label">外观模式</span>
+        <button id="theme-toggle-btn" class="mode-btn" type="button">切换到日间</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="block" id="about">
+        <h2 class="section-title">✨ 二次元 ID</h2>
+        <p class="section-sub">ANIME IDENTITY</p>
+        <div class="section-body">
+          来到这里的素未谋面的朋友，你好，我是 <strong>Knight Of Night</strong>，一名热爱二次元世界的普通人。
+          平时喜欢追番、听歌、玩游戏，偶尔也会写点关于喜欢角色的碎碎念。
+          平时会玩赛马娘，LOL，守望先锋，幸福工厂，杀戮尖塔等游戏。
+        </div>
+      </section>
+
+      <section class="block" id="hobbies">
+        <h2 class="section-title">🌈 兴趣爱好</h2>
+        <p class="section-sub">HOBBIES</p>
+        <div class="section-body">
+          <p>这些是我比较常干、也最享受的一些事情：</p>
+          <div class="pill-list">
+            <span class="pill">追番＆补番</span>
+            <span class="pill">听 JPOP，四夜人</span>
+            <span class="pill">JRPG / Galgame</span>
+            <span class="pill">进行同人创作</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" id="characters">
+        <h2 class="section-title">💖 喜欢的角色</h2>
+        <p class="section-sub">FAVORITE CHARACTERS</p>
+        <div class="section-body">
+          <ul class="character-list">
+            <li class="character-item">
+              <img src="images/02.jpg" alt="大和赤骥" loading="lazy" decoding="async" />
+              <div class="character-info">
+                <span class="character-name">大和赤骥</span>
+                <span class="character-from">出自：赛马娘</span>
+              </div>
+            </li>
+            <li class="character-item">
+              <img src="images/03.jpg" alt="新泽西" loading="lazy" decoding="async" />
+              <div class="character-info">
+                <span class="character-name">新泽西</span>
+                <span class="character-from">出自：碧蓝航线</span>
+              </div>
+            </li>
+            <li class="character-item">
+              <img src="images/04.jpg" alt="初音ミク" loading="lazy" decoding="async" />
+              <div class="character-info">
+                <span class="character-name">初音ミク</span>
+                <span class="character-from">出自：VOCALOID</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="block" id="acgn">
+        <h2 class="section-title">⭐ 我推的 ACGN</h2>
+        <p class="section-sub">ACGN FAVORITES</p>
+        <div class="section-body">
+          <ul class="character-list">
+            <li class="character-item"><div class="character-info"><span class="character-name">番剧</span><span class="character-from">孤独摇滚！ / 物语系列</span></div></li>
+            <li class="character-item"><div class="character-info"><span class="character-name">漫画</span><span class="character-from">间谍过家家 / 电锯人</span></div></li>
+            <li class="character-item"><div class="character-info"><span class="character-name">游戏</span><span class="character-from">原神 / 崩坏：星穹铁道 / 蓝档案</span></div></li>
+            <li class="character-item"><div class="character-info"><span class="character-name">小说</span><span class="character-from">魔法禁书目录 / 刀剑神域</span></div></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2 class="section-title">🔗 我的主页</h2>
+        <p class="section-sub">LINKS</p>
+        <div class="links">
+          <a href="https://space.bilibili.com/1322836107?spm_id_from=333.1007.0.0" target="_blank" rel="noopener noreferrer" class="anime-btn">B站主页</a>
+          <a href="https://music.163.com/#/user/home?id=561924367" target="_blank" rel="noopener noreferrer" class="anime-btn">网易云主页</a>
+        </div>
+      </section>
+
+      <section class="player-wrap">
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" height="86" src="https://music.163.com/outchain/player?type=2&id=785887&auto=1&height=66"></iframe>
+      </section>
+    </main>
+
+    <footer>PS：以上文字与角色名称都是示例，可以直接在代码中改成你自己的信息。</footer>
+  </div>
+
+  <script>
+    function scrollToSection(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    (function () {
+      var navButtons = document.querySelectorAll(".nav-btn[data-target]");
+      navButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var target = btn.getAttribute("data-target");
+          if (target) scrollToSection(target);
+        });
+      });
+    })();
+
+    (function () {
+      var el = document.getElementById("subtitle-text");
+      if (!el) return;
+      var texts = [
+        "什么都无法舍弃的人，什么都改变不了。",
+        "只要不停下来，道路就会不断延伸。",
+        "愿你有一天能和你重要的人重逢。",
+        "无法触及，因而闪耀。",
+        "我的征途是星辰大海。"
+      ];
+      var current = -1;
+      function setRandomSubtitle() {
+        var idx;
+        do {
+          idx = Math.floor(Math.random() * texts.length);
+        } while (texts.length > 1 && idx === current);
+        current = idx;
+        el.textContent = texts[idx];
+      }
+      setRandomSubtitle();
+      setInterval(setRandomSubtitle, 5000);
+    })();
+
+    (function () {
+      var body = document.body;
+      var btn = document.getElementById("theme-toggle-btn");
+      function applyTheme(theme) {
+        if (theme === "dark") {
+          body.classList.add("dark-mode");
+          if (btn) btn.textContent = "切换到日间";
+        } else {
+          body.classList.remove("dark-mode");
+          if (btn) btn.textContent = "切换到夜间";
+        }
+      }
+      var stored = null;
+      try { stored = localStorage.getItem("knight-theme-mobile"); } catch (e) {}
+      applyTheme(stored === "light" ? "light" : "dark");
+      if (btn) {
+        btn.addEventListener("click", function () {
+          var next = body.classList.contains("dark-mode") ? "light" : "dark";
+          applyTheme(next);
+          try { localStorage.setItem("knight-theme-mobile", next); } catch (e) {}
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
