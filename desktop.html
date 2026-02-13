@@ -291,6 +291,41 @@
       cursor: grab;
     }
 
+    .live2d-dialog {
+      position: fixed;
+      left: 150px;
+      bottom: 235px;
+      max-width: min(240px, calc(100vw - 180px));
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(148, 210, 255, 0.9);
+      box-shadow: 0 8px 18px rgba(126, 201, 255, 0.35);
+      color: #35425a;
+      font-size: 13px;
+      line-height: 1.55;
+      z-index: 30;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .live2d-dialog.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .live2d-dialog::after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      bottom: -10px;
+      border-width: 10px 8px 0;
+      border-style: solid;
+      border-color: rgba(255, 255, 255, 0.95) transparent transparent;
+    }
+
     .comment-card {
       margin-top: 8px;
       padding: 12px 10px 16px;
@@ -537,6 +572,17 @@
       color: #f9fafb;
     }
 
+    body.dark-mode .live2d-dialog {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(55, 65, 81, 0.95);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
+      color: #e5e7ff;
+    }
+
+    body.dark-mode .live2d-dialog::after {
+      border-color: rgba(15, 23, 42, 0.95) transparent transparent;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -737,6 +783,7 @@
       <span class="small-pill">Made with ✨ in Kon</span>
     </footer>
   </div>
+  <div id="live2d-dialog" class="live2d-dialog" aria-live="polite"></div>
 
   <div class="netease-widget" id="netease-widget">
     <div class="net-ease">
@@ -918,20 +965,84 @@
   },
   display: {
     position: "left",
-    width: 180,
-    height: 300,
-    hOffset: 10,
-    vOffset: -40
+    width: 140,
+    height: 230,
+    hOffset: 6,
+    vOffset: -20
   },
   mobile: {
     show: true,
-    scale: 0.5
+    scale: 0.42
   },
   react: {
     opacityDefault: 0.9,
     opacityOnHover: 1
   }
 });
+
+    // Live2D 进场问候 + 触碰对话
+    (function () {
+      var dialogEl = document.getElementById("live2d-dialog");
+      if (!dialogEl) return;
+
+      var enterMessages = [
+        "欢迎回来，今天也要元气满满。",
+        "页面加载完成啦，要不要先点点我？",
+        "你好呀，我已经在这里等你了。"
+      ];
+      var touchMessages = [
+        "唔... 你碰到我了。",
+        "收到触碰信号，心情值 +1。",
+        "再摸一下也可以，不过要温柔一点。",
+        "要不要聊聊你今天看的番？",
+        "我在，随时可以和你对话。"
+      ];
+
+      var hideTimer = null;
+      var showCooldown = 0;
+
+      function pickRandom(list) {
+        return list[Math.floor(Math.random() * list.length)];
+      }
+
+      function showDialog(message, duration) {
+        if (!message) return;
+        dialogEl.textContent = message;
+        dialogEl.classList.add("show");
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function () {
+          dialogEl.classList.remove("show");
+        }, duration || 3200);
+      }
+
+      function onTouchTalk() {
+        var now = Date.now();
+        if (now - showCooldown < 700) return;
+        showCooldown = now;
+        showDialog(pickRandom(touchMessages), 2600);
+      }
+
+      function bindLive2DTouch() {
+        var container = document.querySelector(".live2d-widget-container");
+        var canvas = document.querySelector("#live2dcanvas, .live2d-widget-container canvas, canvas#live2dcanvas");
+        if (!container && !canvas) return false;
+        var eventTarget = canvas || container;
+        if (canvas) canvas.style.cursor = "pointer";
+        if (container) container.style.cursor = "pointer";
+        eventTarget.addEventListener("pointerdown", onTouchTalk, { passive: true });
+        eventTarget.addEventListener("click", onTouchTalk, { passive: true });
+        showDialog(pickRandom(enterMessages), 3600);
+        return true;
+      }
+
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries += 1;
+        if (bindLive2DTouch() || tries > 40) {
+          clearInterval(timer);
+        }
+      }, 250);
+    })();
 
   </script>
 </body>
