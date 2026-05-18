@@ -294,16 +294,17 @@
     .live2d-dialog {
       position: fixed;
       left: 150px;
-      bottom: 235px;
-      max-width: min(240px, calc(100vw - 180px));
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(148, 210, 255, 0.9);
-      box-shadow: 0 8px 18px rgba(126, 201, 255, 0.35);
-      color: #35425a;
-      font-size: 13px;
-      line-height: 1.55;
+      top: 150px;
+      max-width: min(300px, calc(100vw - 32px));
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 2px solid rgba(16, 34, 61, 0.95);
+      box-shadow: 0 14px 30px rgba(16, 34, 61, 0.26);
+      color: #12223d;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
       z-index: 30;
       opacity: 0;
       transform: translateY(8px);
@@ -319,11 +320,32 @@
     .live2d-dialog::after {
       content: "";
       position: absolute;
-      left: 20px;
-      bottom: -10px;
-      border-width: 10px 8px 0;
+      left: 18px;
+      top: 100%;
+      border-width: 14px 12px 0;
       border-style: solid;
-      border-color: rgba(255, 255, 255, 0.95) transparent transparent;
+      border-color: rgba(16, 34, 61, 0.95) transparent transparent;
+    }
+
+    .live2d-dialog::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 100%;
+      border-width: 11px 10px 0;
+      border-style: solid;
+      border-color: rgba(255, 255, 255, 0.98) transparent transparent;
+      z-index: 1;
+    }
+
+    .live2d-dialog[data-side="right"]::after {
+      left: auto;
+      right: 18px;
+    }
+
+    .live2d-dialog[data-side="right"]::before {
+      left: auto;
+      right: 20px;
     }
 
     .music-tip {
@@ -359,6 +381,106 @@
       font-size: 12px;
       color: #8b9cc0;
       margin-bottom: 8px;
+    }
+
+    .comment-form {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .comment-input,
+    .comment-textarea {
+      width: 100%;
+      border: 1px solid rgba(148, 210, 255, 0.9);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+      color: #2c3d58;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .comment-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .comment-submit {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      width: fit-content;
+      background: linear-gradient(135deg, #5ca8ff, #fbbf24);
+      color: #12223d;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .comment-list {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .comment-admin {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .comment-admin-input {
+      flex: 1 1 180px;
+      border: 1px solid rgba(148, 210, 255, 0.9);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #2c3d58;
+    }
+
+    .comment-admin-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: #1d4ed8;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .comment-item {
+      border: 1px solid rgba(148, 210, 255, 0.75);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.93);
+      padding: 8px 10px;
+    }
+
+    .comment-item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: #486287;
+      margin-bottom: 4px;
+    }
+
+    .comment-item-body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #273955;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .comment-delete {
+      border: none;
+      background: transparent;
+      color: #3568a6;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
     }
 
     .sidebar {
@@ -594,12 +716,16 @@
 
     body.dark-mode .live2d-dialog {
       background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(55, 65, 81, 0.95);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
-      color: #e5e7ff;
+      border-color: rgba(213, 225, 255, 0.98);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.68);
+      color: #eaf1ff;
     }
 
     body.dark-mode .live2d-dialog::after {
+      border-color: rgba(213, 225, 255, 0.98) transparent transparent;
+    }
+
+    body.dark-mode .live2d-dialog::before {
       border-color: rgba(15, 23, 42, 0.95) transparent transparent;
     }
 
@@ -608,6 +734,27 @@
       border-color: rgba(55, 65, 81, 0.95);
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
       color: #e5e7ff;
+    }
+
+    body.dark-mode .comment-input,
+    body.dark-mode .comment-textarea,
+    body.dark-mode .comment-item,
+    body.dark-mode .comment-admin-input {
+      background: rgba(15, 23, 42, 0.88);
+      border-color: rgba(71, 85, 105, 0.95);
+      color: #e5e7ff;
+    }
+
+    body.dark-mode .comment-item-head {
+      color: #bcd2ff;
+    }
+
+    body.dark-mode .comment-item-body {
+      color: #e5e7ff;
+    }
+
+    body.dark-mode .comment-delete {
+      color: #9ec5ff;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -770,6 +917,22 @@
             </li>
           </ul>
         </div>
+      </section>
+
+      <section class="block post-card comment-card" id="comment">
+        <h2 class="section-title">💬 留言板</h2>
+        <p class="section-sub">COMMENTS</p>
+        <div class="comment-hint">评论会保存在你的浏览器本地（localStorage）。</div>
+        <form id="comment-form" class="comment-form">
+          <input id="comment-name" class="comment-input" type="text" maxlength="20" placeholder="昵称（可选）">
+          <textarea id="comment-text" class="comment-textarea" maxlength="300" placeholder="写点想说的话吧..."></textarea>
+          <button type="submit" class="comment-submit">发布评论</button>
+        </form>
+        <div class="comment-admin">
+          <input id="comment-admin-key" class="comment-admin-input" type="password" placeholder="管理员口令（用于删除评论）">
+          <button type="button" id="comment-admin-btn" class="comment-admin-btn">进入管理模式</button>
+        </div>
+        <div id="comment-list" class="comment-list"></div>
       </section>
       </div>
 
@@ -1065,6 +1228,7 @@
 
       var hideTimer = null;
       var showCooldown = 0;
+      var bound = false;
 
       function pickRandom(list) {
         return list[Math.floor(Math.random() * list.length)];
@@ -1088,9 +1252,11 @@
       }
 
       function bindLive2DTouch() {
+        if (bound) return true;
         var container = document.querySelector(".live2d-widget-container");
         var canvas = document.querySelector("#live2dcanvas, .live2d-widget-container canvas, canvas#live2dcanvas");
         if (!container && !canvas) return false;
+        bound = true;
         var eventTarget = canvas || container;
         if (canvas) {
           canvas.style.cursor = "pointer";
@@ -1107,17 +1273,24 @@
           var target = canvas || container;
           if (!target) return;
           var rect = target.getBoundingClientRect();
-          var left = Math.max(12, Math.min(window.innerWidth - 260, rect.right - 26));
-          var top = Math.max(12, rect.top - 64);
+          var bubbleWidth = Math.min(300, window.innerWidth - 32);
+          var left;
+          if (rect.left > window.innerWidth * 0.5) {
+            left = Math.max(12, rect.left - bubbleWidth + 40);
+            dialogEl.dataset.side = "right";
+          } else {
+            left = Math.max(12, Math.min(window.innerWidth - bubbleWidth - 12, rect.right - 16));
+            dialogEl.dataset.side = "left";
+          }
+          var top = Math.max(12, rect.top + 16);
           dialogEl.style.left = left + "px";
           dialogEl.style.top = top + "px";
-          dialogEl.style.bottom = "auto";
         }
 
         updateDialogPosition();
         window.addEventListener("resize", updateDialogPosition);
         window.addEventListener("scroll", updateDialogPosition, { passive: true });
-        setInterval(updateDialogPosition, 600);
+        setInterval(updateDialogPosition, 500);
         showDialog(pickRandom(enterMessages), 3600);
         return true;
       }
@@ -1129,6 +1302,133 @@
           clearInterval(timer);
         }
       }, 250);
+    })();
+
+    // Live2D 尺寸随页面变化
+    (function () {
+      function applyScale() {
+        var container = document.querySelector(".live2d-widget-container");
+        if (!container) return;
+        var w = window.innerWidth;
+        var scale = 1;
+        if (w < 1200) scale = 0.92;
+        if (w < 980) scale = 0.84;
+        if (w < 820) scale = 0.75;
+        container.style.transformOrigin = "left bottom";
+        container.style.transform = "scale(" + scale + ")";
+      }
+      var timer = setInterval(function () {
+        var container = document.querySelector(".live2d-widget-container");
+        if (!container) return;
+        clearInterval(timer);
+        applyScale();
+        window.addEventListener("resize", applyScale);
+      }, 250);
+    })();
+
+    // 云端评论功能
+    (function () {
+      var form = document.getElementById("comment-form");
+      var nameEl = document.getElementById("comment-name");
+      var textEl = document.getElementById("comment-text");
+      var listEl = document.getElementById("comment-list");
+      var adminKeyEl = document.getElementById("comment-admin-key");
+      var adminBtn = document.getElementById("comment-admin-btn");
+      if (!form || !nameEl || !textEl || !listEl || !adminKeyEl || !adminBtn) return;
+
+      var comments = [];
+      var adminToken = sessionStorage.getItem("knight-admin-token") || "";
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>'\"]/g, function (m) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;" }[m];
+        });
+      }
+
+      function formatTime(ts) {
+        var d = new Date(ts);
+        var p = function (v) { return String(v).padStart(2, "0"); };
+        return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+      }
+
+      function request(url, options) {
+        return fetch(url, options).then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (!res.ok) throw new Error(data.error || "请求失败");
+            return data;
+          });
+        });
+      }
+
+      function render() {
+        if (!comments.length) {
+          listEl.innerHTML = "<div class=\"comment-hint\">还没有评论，来抢个沙发吧。</div>";
+          return;
+        }
+        listEl.innerHTML = comments.map(function (item) {
+          var deleteBtn = adminToken
+            ? " · <button type=\"button\" class=\"comment-delete\" data-id=\"" + item.id + "\">删除</button>"
+            : "";
+          return "<article class=\"comment-item\" data-id=\"" + item.id + "\">"
+            + "<div class=\"comment-item-head\"><strong>" + escapeHTML(item.name || "匿名") + "</strong>"
+            + "<span>" + formatTime(item.time) + deleteBtn + "</span></div>"
+            + "<div class=\"comment-item-body\">" + escapeHTML(item.text) + "</div>"
+            + "</article>";
+        }).join("");
+      }
+
+      function loadComments() {
+        return request("/api/comments").then(function (data) {
+          comments = data.comments || [];
+          render();
+        }).catch(function () {
+          listEl.innerHTML = "<div class=\"comment-hint\">评论服务连接失败，请稍后重试。</div>";
+        });
+      }
+      loadComments();
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = (nameEl.value || "").trim().slice(0, 20);
+        var text = (textEl.value || "").trim().slice(0, 300);
+        if (!text) return;
+        request("/api/comments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name, text: text })
+        }).then(function () {
+          textEl.value = "";
+          loadComments();
+        }).catch(function (err) {
+          alert(err.message);
+        });
+      });
+
+      listEl.addEventListener("click", function (e) {
+        var btn = e.target.closest(".comment-delete");
+        if (!btn) return;
+        if (!adminToken) {
+          alert("请先输入管理员口令进入管理模式。");
+          return;
+        }
+        var id = Number(btn.getAttribute("data-id"));
+        request("/api/comments/" + id, {
+          method: "DELETE",
+          headers: { "x-admin-token": adminToken }
+        }).then(function () {
+          loadComments();
+        }).catch(function (err) {
+          alert(err.message);
+        });
+      });
+
+      adminBtn.addEventListener("click", function () {
+        var key = (adminKeyEl.value || "").trim();
+        if (!key) return;
+        adminToken = key;
+        sessionStorage.setItem("knight-admin-token", adminToken);
+        render();
+      });
     })();
 
   </script>
