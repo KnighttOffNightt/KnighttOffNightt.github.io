@@ -245,6 +245,9 @@
     }
     .comment-item-body { font-size: 13px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
     .comment-delete { border: none; background: transparent; text-decoration: underline; font-size: 12px; color: #2563eb; }
+    .comment-reply-btn { border: none; background: transparent; text-decoration: underline; font-size: 12px; color: #1d4ed8; }
+    .comment-replies { margin-top: 6px; display: grid; gap: 6px; }
+    .comment-reply-item { border-left: 2px solid rgba(125, 211, 252, 0.8); padding-left: 8px; font-size: 12px; }
     footer { margin: 14px 2px 4px; font-size: 11px; color: #64748b; }
 
     body.dark-mode {
@@ -293,6 +296,7 @@
     }
     body.dark-mode .comment-item-head { color: #cbd5e1; }
     body.dark-mode .comment-delete { color: #93c5fd; }
+    body.dark-mode .comment-reply-btn { color: #93c5fd; }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -612,9 +616,11 @@
           if (!ref) return;
           var rect = ref.getBoundingClientRect();
           var bubbleWidth = Math.min(240, window.innerWidth - 24);
-          var left = Math.max(12, Math.min(window.innerWidth - bubbleWidth - 12, rect.right - 10));
+          var centerX = rect.left + rect.width * 0.5;
+          var left = Math.max(12, Math.min(window.innerWidth - bubbleWidth - 12, centerX - bubbleWidth * 0.5));
+          var bubbleHeight = Math.max(54, dialogEl.offsetHeight || 78);
           dialogEl.style.left = left + "px";
-          dialogEl.style.top = Math.max(12, rect.top + 10) + "px";
+          dialogEl.style.top = Math.max(12, rect.top - bubbleHeight - 16) + "px";
           dialogEl.dataset.side = "left";
         }
 
@@ -676,6 +682,13 @@
         });
       }
 
+      function serviceMessage() {
+        if (location.protocol === "file:") {
+          return "当前是 file:// 打开，无法访问评论 API。请用 http://localhost:3000 或已部署域名访问。";
+        }
+        return "评论服务连接失败。请确认后端已启动，并且可访问 /api/comments 与 /health。";
+      }
+
       function render() {
         if (!comments.length) {
           listEl.innerHTML = "<div class=\"section-body\">还没有评论，欢迎第一个留言。</div>";
@@ -685,10 +698,16 @@
           var deleteBtn = adminToken
             ? " · <button type=\"button\" class=\"comment-delete\" data-id=\"" + item.id + "\">删除</button>"
             : "";
+          var replies = (item.replies || []).map(function (r) {
+            return "<div class=\"comment-reply-item\"><strong>" + escapeHTML(r.name || "匿名") + "</strong>："
+              + "<span>" + escapeHTML(r.text) + "</span>"
+              + "<span>（" + formatTime(r.time) + "）</span></div>";
+          }).join("");
           return "<article class=\"comment-item\">"
             + "<div class=\"comment-item-head\"><strong>" + escapeHTML(item.name || "匿名") + "</strong>"
-            + "<span>" + formatTime(item.time) + deleteBtn + "</span></div>"
+            + "<span>" + formatTime(item.time) + " · <button type=\"button\" class=\"comment-reply-btn\" data-id=\"" + item.id + "\">回复</button>" + deleteBtn + "</span></div>"
             + "<div class=\"comment-item-body\">" + escapeHTML(item.text) + "</div>"
+            + "<div class=\"comment-replies\">" + replies + "</div>"
             + "</article>";
         }).join("");
       }
@@ -698,7 +717,7 @@
           comments = data.comments || [];
           render();
         }).catch(function () {
-          listEl.innerHTML = "<div class=\"section-body\">评论服务连接失败，请稍后重试。</div>";
+          listEl.innerHTML = "<div class=\"section-body\">" + escapeHTML(serviceMessage()) + "</div>";
         });
       }
       loadComments();
@@ -721,6 +740,24 @@
       });
 
       listEl.addEventListener("click", function (e) {
+        var replyBtn = e.target.closest(".comment-reply-btn");
+        if (replyBtn) {
+          var replyId = Number(replyBtn.getAttribute("data-id"));
+          var replyText = (window.prompt("输入你的回复内容：") || "").trim().slice(0, 300);
+          if (!replyText) return;
+          var replyName = (window.prompt("回复昵称（可选）：") || "").trim().slice(0, 20);
+          request("/api/comments/" + replyId + "/replies", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: replyName, text: replyText })
+          }).then(function () {
+            loadComments();
+          }).catch(function (err) {
+            alert(err.message);
+          });
+          return;
+        }
+
         var btn = e.target.closest(".comment-delete");
         if (!btn) return;
         if (!adminToken) {

@@ -4,7 +4,7 @@ const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "change-this-admin-token";
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "kon144504";
 const DB_PATH = path.join(__dirname, "comments.json");
 
 app.use(express.json({ limit: "200kb" }));
@@ -29,8 +29,25 @@ function normalizeText(value, maxLen) {
   return String(value || "").trim().slice(0, maxLen);
 }
 
+function normalizeComments(comments) {
+  return comments.map((item) => ({
+    id: item.id,
+    name: normalizeText(item.name, 20),
+    text: normalizeText(item.text, 300),
+    time: Number(item.time) || Date.now(),
+    replies: Array.isArray(item.replies)
+      ? item.replies.map((r) => ({
+          id: r.id,
+          name: normalizeText(r.name, 20),
+          text: normalizeText(r.text, 300),
+          time: Number(r.time) || Date.now()
+        }))
+      : []
+  }));
+}
+
 app.get("/api/comments", (req, res) => {
-  const comments = readComments()
+  const comments = normalizeComments(readComments())
     .sort((a, b) => b.time - a.time)
     .slice(0, 200);
   res.json({ comments });
@@ -43,16 +60,43 @@ app.post("/api/comments", (req, res) => {
     return res.status(400).json({ error: "评论内容不能为空" });
   }
 
-  const comments = readComments();
+  const comments = normalizeComments(readComments());
   const item = {
     id: Date.now() + Math.floor(Math.random() * 1000),
     name,
     text,
-    time: Date.now()
+    time: Date.now(),
+    replies: []
   };
   comments.push(item);
   writeComments(comments);
   res.status(201).json({ ok: true, comment: item });
+});
+
+app.post("/api/comments/:id/replies", (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isFinite(id)) {
+    return res.status(400).json({ error: "无效评论 ID" });
+  }
+  const name = normalizeText(req.body.name, 20);
+  const text = normalizeText(req.body.text, 300);
+  if (!text) {
+    return res.status(400).json({ error: "回复内容不能为空" });
+  }
+
+  const comments = normalizeComments(readComments());
+  const target = comments.find((item) => item.id === id);
+  if (!target) {
+    return res.status(404).json({ error: "评论不存在" });
+  }
+  target.replies.push({
+    id: Date.now() + Math.floor(Math.random() * 1000),
+    name,
+    text,
+    time: Date.now()
+  });
+  writeComments(comments);
+  res.status(201).json({ ok: true });
 });
 
 app.delete("/api/comments/:id", (req, res) => {

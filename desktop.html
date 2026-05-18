@@ -483,6 +483,28 @@
       padding: 0;
     }
 
+    .comment-reply-btn {
+      border: none;
+      background: transparent;
+      color: #1d4ed8;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    .comment-replies {
+      margin-top: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .comment-reply-item {
+      border-left: 2px solid rgba(148, 210, 255, 0.8);
+      padding-left: 8px;
+      font-size: 12px;
+    }
+
     .sidebar {
       display: flex;
       flex-direction: column;
@@ -754,6 +776,10 @@
     }
 
     body.dark-mode .comment-delete {
+      color: #9ec5ff;
+    }
+
+    body.dark-mode .comment-reply-btn {
       color: #9ec5ff;
     }
 
@@ -1274,15 +1300,11 @@
           if (!target) return;
           var rect = target.getBoundingClientRect();
           var bubbleWidth = Math.min(300, window.innerWidth - 32);
-          var left;
-          if (rect.left > window.innerWidth * 0.5) {
-            left = Math.max(12, rect.left - bubbleWidth + 40);
-            dialogEl.dataset.side = "right";
-          } else {
-            left = Math.max(12, Math.min(window.innerWidth - bubbleWidth - 12, rect.right - 16));
-            dialogEl.dataset.side = "left";
-          }
-          var top = Math.max(12, rect.top + 16);
+          var centerX = rect.left + rect.width * 0.5;
+          var left = Math.max(12, Math.min(window.innerWidth - bubbleWidth - 12, centerX - bubbleWidth * 0.5));
+          var bubbleHeight = Math.max(56, dialogEl.offsetHeight || 88);
+          var top = Math.max(12, rect.top - bubbleHeight - 18);
+          dialogEl.dataset.side = "left";
           dialogEl.style.left = left + "px";
           dialogEl.style.top = top + "px";
         }
@@ -1360,6 +1382,13 @@
         });
       }
 
+      function serviceMessage() {
+        if (location.protocol === "file:") {
+          return "当前是 file:// 打开，无法访问评论 API。请用 http://localhost:3000 或已部署域名访问。";
+        }
+        return "评论服务连接失败。请确认后端已启动，并且可访问 /api/comments 与 /health。";
+      }
+
       function render() {
         if (!comments.length) {
           listEl.innerHTML = "<div class=\"comment-hint\">还没有评论，来抢个沙发吧。</div>";
@@ -1369,10 +1398,16 @@
           var deleteBtn = adminToken
             ? " · <button type=\"button\" class=\"comment-delete\" data-id=\"" + item.id + "\">删除</button>"
             : "";
+          var replies = (item.replies || []).map(function (r) {
+            return "<div class=\"comment-reply-item\"><strong>" + escapeHTML(r.name || "匿名") + "</strong>："
+              + "<span>" + escapeHTML(r.text) + "</span>"
+              + "<span>（" + formatTime(r.time) + "）</span></div>";
+          }).join("");
           return "<article class=\"comment-item\" data-id=\"" + item.id + "\">"
             + "<div class=\"comment-item-head\"><strong>" + escapeHTML(item.name || "匿名") + "</strong>"
-            + "<span>" + formatTime(item.time) + deleteBtn + "</span></div>"
+            + "<span>" + formatTime(item.time) + " · <button type=\"button\" class=\"comment-reply-btn\" data-id=\"" + item.id + "\">回复</button>" + deleteBtn + "</span></div>"
             + "<div class=\"comment-item-body\">" + escapeHTML(item.text) + "</div>"
+            + "<div class=\"comment-replies\">" + replies + "</div>"
             + "</article>";
         }).join("");
       }
@@ -1382,7 +1417,7 @@
           comments = data.comments || [];
           render();
         }).catch(function () {
-          listEl.innerHTML = "<div class=\"comment-hint\">评论服务连接失败，请稍后重试。</div>";
+          listEl.innerHTML = "<div class=\"comment-hint\">" + escapeHTML(serviceMessage()) + "</div>";
         });
       }
       loadComments();
@@ -1405,6 +1440,24 @@
       });
 
       listEl.addEventListener("click", function (e) {
+        var replyBtn = e.target.closest(".comment-reply-btn");
+        if (replyBtn) {
+          var replyId = Number(replyBtn.getAttribute("data-id"));
+          var replyText = (window.prompt("输入你的回复内容：") || "").trim().slice(0, 300);
+          if (!replyText) return;
+          var replyName = (window.prompt("回复昵称（可选）：") || "").trim().slice(0, 20);
+          request("/api/comments/" + replyId + "/replies", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: replyName, text: replyText })
+          }).then(function () {
+            loadComments();
+          }).catch(function (err) {
+            alert(err.message);
+          });
+          return;
+        }
+
         var btn = e.target.closest(".comment-delete");
         if (!btn) return;
         if (!adminToken) {
